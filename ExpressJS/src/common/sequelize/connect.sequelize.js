@@ -1,12 +1,13 @@
 import { Sequelize } from "sequelize";
+import { DATABASE_URL } from "../constant/app.constant.js";
 
-const sequelize = new Sequelize('mysql://root:1234@localhost:3307/db_cyber_community')
+const sequelize = new Sequelize(DATABASE_URL, { logging: true });
 
 try {
-  await sequelize.authenticate();
-  console.log('Connection has been established successfully.');
+    await sequelize.authenticate();
+    console.log("Connection has been established successfully.");
 } catch (error) {
-  console.error('Unable to connect to the database:', error);
+    console.error("Unable to connect to the database:", error);
 }
 
-export default sequelize
+export default sequelize;

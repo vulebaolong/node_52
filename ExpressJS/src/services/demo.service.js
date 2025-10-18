@@ -1,5 +1,7 @@
 import { UnauthorizedException } from "../common/helpers/exception.helper.js";
+import prisma from "../common/prisma/connect.prisma.js";
 import sequelize from "../common/sequelize/connect.sequelize.js";
+import Role from "../models/role.model.js";
 
 const demoService = {
     checkServer: () => {
@@ -11,11 +13,20 @@ const demoService = {
         console.log("query", query);
         console.log({ query });
 
-        const [results, metadata] = await sequelize.query("SELECT * FROM Users"); // Raw query - use array destructuring
+        const [results, metadata] = await sequelize.query("SELECT * FROM Roles"); // Raw query - use array destructuring
 
         console.log("result", results);
 
-        return results;
+        // sequelize
+        const roleSequelize = await Role.findAll();
+
+        // prisma
+        const rolePrisma = await prisma.roles.findMany();
+
+        return {
+            sequelize: roleSequelize,
+            prisma: rolePrisma,
+        };
     },
     path: (req) => {
         const params = req.params;

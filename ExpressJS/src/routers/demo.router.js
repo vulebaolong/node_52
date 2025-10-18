@@ -40,11 +40,11 @@ demoRouter.get(
     (req, res, next) => {
         console.log("mid 2");
 
-        console.log("Dữ liệu nhận từ mid 1", req.payload);
+        // console.log("Dữ liệu nhận từ mid 1", req.payload);
 
-        if (req.payload === "user_banned") {
-            throw new UnauthorizedException("User Bị ban")
-        }
+        // if (req.payload === "user_banned") {
+        //     throw new UnauthorizedException("User Bị ban")
+        // }
 
         next();
     },
