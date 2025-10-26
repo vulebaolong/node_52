@@ -57,7 +57,8 @@ export const authService = {
     },
 
     getInfo: async function (req) {
-        return "getInfo"
+        delete req.user.password;
+        return req.user;
     },
 
     create: async function (req) {
