@@ -2,6 +2,24 @@ import { responseSuccess } from "../common/helpers/function.helper.js";
 import { authService } from "../services/auth.service.js";
 
 export const authController = {
+   register: async function (req, res, next) {
+      const result = await authService.register(req);
+      const response = responseSuccess(result, `Register auth successfully`);
+      res.status(response.statusCode).json(response);
+   },
+
+   login: async function (req, res, next) {
+      const result = await authService.login(req);
+      const response = responseSuccess(result, `Login auth successfully`);
+      res.status(response.statusCode).json(response);
+   },
+
+   getInfo: async function (req, res, next) {
+      const result = await authService.getInfo(req);
+      const response = responseSuccess(result, `Get info successfully`);
+      res.status(response.statusCode).json(response);
+   },
+   
    create: async function (req, res, next) {
       const result = await authService.create(req);
       const response = responseSuccess(result, `Create auth successfully`);
