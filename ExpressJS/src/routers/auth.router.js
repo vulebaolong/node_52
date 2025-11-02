@@ -2,13 +2,14 @@ import express from "express";
 import { authController } from "../controllers/auth.controler.js";
 import protect from "../common/middlewares/protect.middleware.js";
 import passport from "passport";
+import { checkPermision } from "../common/middlewares/check-permision.middleware.js";
 
 const authRouter = express.Router();
 
 // Tạo route CRUD
 authRouter.post("/register", authController.register);
 authRouter.post("/login", authController.login);
-authRouter.get("/get-info", protect, authController.getInfo);
+authRouter.get("/get-info", protect, checkPermision, authController.getInfo);
 
 // login google
 // Khi người dùng click nút google login, thì FE sẽ gọi tới GET: api/auth/google
@@ -21,6 +22,8 @@ authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "
 // API này để hứng tín hiệu của goolge chuyển người dùng, kích hoạt middleware passport để passport làm việc với google lấy profile nằm trong hàm verify
 //  hàm verify nằm ở: src/common/passport/google-oauth20.passport.js
 authRouter.get("/google/callback", passport.authenticate("google", { failureRedirect: "/login", session: false }), authController.googleCalback);
+
+authRouter.post("/refresh-token", authController.refreshToken);
 
 authRouter.post("/", authController.create);
 authRouter.get("/", authController.findAll);

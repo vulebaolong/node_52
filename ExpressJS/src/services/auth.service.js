@@ -1,7 +1,8 @@
-import { BadRequestException } from "../common/helpers/exception.helper.js";
+import { BadRequestException, UnauthorizedException } from "../common/helpers/exception.helper.js";
 import prisma from "../common/prisma/connect.prisma.js";
 import bcrypt from "bcrypt";
 import tokenService from "./token.service.js";
+import { sendMail } from "../common/node-mailler/init.node-mailler.js";
 
 export const authService = {
     register: async function (req) {
@@ -57,6 +58,9 @@ export const authService = {
 
         const tokens = tokenService.createTokens(userExits.id);
 
+        // sendMail(email)
+        await sendMail("vulebaolong@gmail.com", "Cảnh báo đăng nhập");
+
         return tokens;
     },
 
@@ -69,6 +73,37 @@ export const authService = {
         const { accessToken, refreshToken } = tokenService.createTokens(req.user.id);
         // console.log({ accessToken, refreshToken });
         return `http://localhost:3000/login-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    },
+
+    refreshToken: async function (req) {
+        const { accessToken, refreshToken } = req.body;
+
+        const decodeAccessToken = tokenService.verifyAccessToken(accessToken, { ignoreExpiration: true });
+        const decodeRefreshToken = tokenService.verifyRefreshToken(refreshToken);
+
+        if (decodeAccessToken.userId !== decodeRefreshToken.userId) {
+            throw new UnauthorizedException("Token không hợp lệ");
+        }
+
+        const userExist = await prisma.users.findUnique({
+            where: {
+                id: decodeAccessToken.userId,
+            },
+        });
+        if (!userExist) {
+            throw new UnauthorizedException("User không hợp lệ");
+        }
+
+        // Trường hợp 1: trả 2 cặp token
+        // Chỉ khỉ khoản thời gian hết hạn của refreshToken mà người dùng không đăng nhập => login lại
+        const tokens = tokenService.createTokens(userExist.id);
+
+        // Trường hợp 2: chỉ trả accessToken mới
+        // bắt buộc cứ mỗi thời gian hết hạn của refreshToken => login lại
+
+        console.log({ accessToken, refreshToken, decodeAccessToken, decodeRefreshToken });
+
+        return tokens;
     },
 
     create: async function (req) {

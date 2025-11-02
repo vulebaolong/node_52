@@ -27,6 +27,12 @@ export const authController = {
         res.redirect(result);
     },
 
+    refreshToken: async function (req, res, next) {
+        const result = await authService.refreshToken(req);
+        const response = responseSuccess(result, `refreshToken auth successfully`);
+        res.status(response.statusCode).json(response);
+    },
+
     create: async function (req, res, next) {
         const result = await authService.create(req);
         const response = responseSuccess(result, `Create auth successfully`);
