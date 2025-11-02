@@ -46,6 +46,10 @@ export const authService = {
             throw new BadRequestException("Người dùng chưa tồn tại, vui lòng đăng ký");
         }
 
+        if (!password) {
+            throw new BadRequestException("Vui lòng đăng nhập bằng Google, để cập nhật mật khẩu trong setting");
+        }
+
         const isPassword = bcrypt.compareSync(password, userExits.password);
         if (!isPassword) {
             throw new BadRequestException("Mật khẩu chưa chính xác");
@@ -59,6 +63,12 @@ export const authService = {
     getInfo: async function (req) {
         delete req.user.password;
         return req.user;
+    },
+
+    googleCalback: async function (req) {
+        const { accessToken, refreshToken } = tokenService.createTokens(req.user.id);
+        // console.log({ accessToken, refreshToken });
+        return `http://localhost:3000/login-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
     },
 
     create: async function (req) {

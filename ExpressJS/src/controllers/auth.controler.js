@@ -20,6 +20,13 @@ export const authController = {
         res.status(response.statusCode).json(response);
     },
 
+    googleCalback: async function (req, res, next) {
+        // console.log("kiểm tra user tại 1",req.user);
+
+        const result = await authService.googleCalback(req);
+        res.redirect(result);
+    },
+
     create: async function (req, res, next) {
         const result = await authService.create(req);
         const response = responseSuccess(result, `Create auth successfully`);

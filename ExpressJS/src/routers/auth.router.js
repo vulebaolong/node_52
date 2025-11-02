@@ -15,7 +15,12 @@ authRouter.get("/get-info", protect, authController.getInfo);
 // Kích hoạt passport để:
 //          - yêu cầu lấy thông tin: profile, email
 //          - tự chuyển FE sang trang đăng nhập với google
-authRouter.get("/google", passport.authenticate('google', { scope: ['profile', 'email'] }))
+authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+// Sau khi người dùng xác thực với Google thành công, thì google sẽ chuyển người dùng về API (thanh url = GET) này
+// API này để hứng tín hiệu của goolge chuyển người dùng, kích hoạt middleware passport để passport làm việc với google lấy profile nằm trong hàm verify
+//  hàm verify nằm ở: src/common/passport/google-oauth20.passport.js
+authRouter.get("/google/callback", passport.authenticate("google", { failureRedirect: "/login", session: false }), authController.googleCalback);
 
 authRouter.post("/", authController.create);
 authRouter.get("/", authController.findAll);
