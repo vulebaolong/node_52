@@ -16,7 +16,7 @@ app.use(
 );
 app.use(passport.initialize());
 initStrategyGoogleOauth20()
-
+app.use(express.static("public"))
 
 app.use("/api", rootRouter);
 
