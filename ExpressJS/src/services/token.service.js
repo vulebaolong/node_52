@@ -6,7 +6,7 @@ const tokenService = {
         // hạn sử dụng của access token
         // cần được giảm xuống đáng kể, để giảm thiểu rủi ro khi người dùng bị lộ token
         // thời gian hết hạn tồn tại bao nhiêu thì người dùng rủi ro bấy nhiêu (nếu bị lộ)
-        const accessToken = jwt.sign({ userId: userId }, ACCESS_TOKEN_SECRET, { expiresIn: "5s" });
+        const accessToken = jwt.sign({ userId: userId }, ACCESS_TOKEN_SECRET, { expiresIn: "500s" });
 
         // hạn sử dụng của refresh token
         // sẽ để cao hơn thời gian hết hạn của access,

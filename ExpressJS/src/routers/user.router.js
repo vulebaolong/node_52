@@ -7,7 +7,7 @@ import { uploadMemoryCloud } from "../common/multer/memory-cloud.multer.js";
 const userRouter = express.Router();
 
 userRouter.post("/avatar-local", protect, uploadDiskLocal.single("avatar"), userController.avatarLocal);
-userRouter.post("/avatar-cloud", protect, uploadMemoryCloud.single("avatar"),userController.avatarCloud);
+userRouter.post("/avatar-cloud", protect, uploadMemoryCloud.single("avatar"), userController.avatarCloud);
 
 // Tạo route CRUD
 userRouter.post("/", userController.create);

@@ -17,7 +17,6 @@ const articleService = {
 
         const totalPage = Math.ceil(totalItem / pageSize);
 
-
         return {
             page: page,
             pageSize: pageSize,
@@ -25,6 +24,17 @@ const articleService = {
             totalPage: totalPage,
             items: articles || [],
         };
+    },
+    findOne: async (req) => {
+        const { id } = req.params;
+
+        const article = await prisma.articles.findUnique({
+            where: {
+                id: Number(id),
+            },
+        });
+
+        return article;
     },
 };
 

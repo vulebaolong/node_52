@@ -1,14 +1,20 @@
-import express from "express"
-import demoRouter from "./demo.router.js"
-import articleRouter from "./article.router.js"
-import authRouter from "./auth.router.js"
-import userRouter from "./user.router.js"
+import express from "express";
+import demoRouter from "./demo.router.js";
+import articleRouter from "./article.router.js";
+import authRouter from "./auth.router.js";
+import userRouter from "./user.router.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocument } from "../common/swagger/init.swagger.js";
 
-const rootRouter = express.Router()
+const rootRouter = express.Router();
 
-rootRouter.use("/demo", demoRouter)
-rootRouter.use("/article", articleRouter)
-rootRouter.use("/auth", authRouter)
-rootRouter.use("/user", userRouter)
+// swaggerDocument: chấp nhận 3 kiểu, yaml | yml, javascript, json
+// http://localhost:3069/api/docs
+rootRouter.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, { swaggerOptions: { persistAuthorization: true } }));
 
-export default rootRouter
+rootRouter.use("/demo", demoRouter);
+rootRouter.use("/article", articleRouter);
+rootRouter.use("/auth", authRouter);
+rootRouter.use("/user", userRouter);
+
+export default rootRouter;

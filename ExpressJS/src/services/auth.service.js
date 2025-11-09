@@ -59,7 +59,7 @@ export const authService = {
         const tokens = tokenService.createTokens(userExits.id);
 
         // sendMail(email)
-        await sendMail("vulebaolong@gmail.com", "Cảnh báo đăng nhập");
+        sendMail("vulebaolong@gmail.com", "Cảnh báo đăng nhập");
 
         return tokens;
     },

@@ -7,6 +7,11 @@ const articleController = {
         const response = responseSuccess(result, "Find All Success");
         res.status(response.statusCode).json(response);
     },
+    findOne: async (req, res, next) => {
+        const result = await articleService.findOne(req);
+        const response = responseSuccess(result, "Find One Success");
+        res.status(response.statusCode).json(response);
+    },
 };
 
 export default articleController;
