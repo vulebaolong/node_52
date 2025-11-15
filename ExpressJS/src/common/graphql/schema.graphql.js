@@ -26,13 +26,27 @@ export const schema = buildSchema(/* GraphQL */ `
         updatedAt: String
     }
 
+    type PaginationArticle {
+        page: Int
+        pageSize: Int
+        totalItem: Int
+        totalPage: Int
+        items: [Articles]
+    }
+
+    type LoginRes {
+        accessToken: String
+        refreshToken: String
+    }
+
     # Query: type đặc biệt
     type Query {
         hello: String
-        getArticleList: [Articles]
+        getArticleList(page: Int, pageSize: Int): PaginationArticle
     }
 
     # Mutation: type đặc biệt
-    # type Mutation {
-    # }
+    type Mutation {
+        login(email: String, password: String): LoginRes
+    }
 `);

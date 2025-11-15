@@ -11,7 +11,7 @@ const articleService = {
             skip: index,
             take: pageSize,
         });
-        const totalItemPromise = prisma.articles.count();
+        const totalItemPromise = prisma.articles.count({ where: filters });
 
         const [articles, totalItem] = await Promise.all([articlesPromise, totalItemPromise]);
 

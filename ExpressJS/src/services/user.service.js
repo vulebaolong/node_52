@@ -3,6 +3,7 @@ import prisma from "../common/prisma/connect.prisma.js";
 import path from "path";
 import fs from "fs";
 import cloudinary from "../common/cloudinary/init.cloudinary.js";
+import { buildQuery } from "../common/helpers/build-query.helper.js";
 
 export const userService = {
     avatarLocal: async function (req) {
@@ -42,7 +43,7 @@ export const userService = {
 
         const uploadResult = await new Promise((resolve, reject) => {
             cloudinary.uploader
-                .upload_stream({folder: ""},(error, uploadResult) => {
+                .upload_stream({ folder: "" }, (error, uploadResult) => {
                     if (error) {
                         return reject(error);
                     }
@@ -83,11 +84,42 @@ export const userService = {
     },
 
     findAll: async function (req) {
-        return `This action returns all user`;
+        const { page, pageSize, filters, index } = buildQuery(req.query);
+
+        const articlesPromise = prisma.users.findMany({
+            // skip qua index bao nhiêu
+            where: filters,
+            skip: index,
+            take: pageSize,
+        });
+        const totalItemPromise = prisma.users.count({ where: filters });
+
+        const [articles, totalItem] = await Promise.all([articlesPromise, totalItemPromise]);
+
+        const totalPage = Math.ceil(totalItem / pageSize);
+
+        return {
+            page: page,
+            pageSize: pageSize,
+            totalItem: totalItem,
+            totalPage: totalPage,
+            items: articles || [],
+        };
     },
 
     findOne: async function (req) {
-        return `This action returns a id: ${req.params.id} user`;
+        const { id } = req.params;
+
+        const user = await prisma.users.findUnique({
+            where: {
+                id: Number(id),
+            },
+            include: {
+                Roles: true
+            }
+        });
+
+        return user;
     },
 
     update: async function (req) {

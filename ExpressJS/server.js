@@ -7,6 +7,9 @@ import passport from "passport";
 import { createHandler } from "graphql-http/lib/use/express";
 import { schema } from "./src/common/graphql/schema.graphql.js";
 import { root } from "./src/common/graphql/root.graphql.js";
+import protectGraphQL from "./src/common/middlewares/protect-graphql.middleware.js";
+import { createServer } from "http";
+import { initSocket } from "./src/common/socket/init.socket.js";
 
 const app = express();
 
@@ -27,6 +30,12 @@ app.all(
     createHandler({
         schema: schema,
         rootValue: root,
+        context: async (req) => {
+            console.log(req.headers);
+            const user = await protectGraphQL(req);
+
+            return { user };
+        },
     })
 );
 
@@ -34,7 +43,11 @@ app.use("/api", rootRouter);
 
 app.use(appError);
 
+// socket
+const httpServer = createServer(app);
+initSocket(httpServer);
+
 const PORT = 3069;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`🤷 Server online at http://localhost:${PORT}`);
 });

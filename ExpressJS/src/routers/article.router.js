@@ -6,6 +6,6 @@ const articleRouter = express.Router()
 // CRUD
 // Read All
 articleRouter.get("/", articleController.findAll)
-articleRouter.get("/:id", articleController.findOne)
+// articleRouter.get("/:id", articleController.findOne)
 
 export default articleRouter
