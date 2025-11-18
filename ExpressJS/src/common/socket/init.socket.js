@@ -11,7 +11,7 @@ export const initSocket = (httpServer) => {
         socket.on("CREATE_ROOM", async (data, cb) => {
             try {
                 console.log("CREATE_ROOM", data);
-                const { targetUserIds, accessToken } = data;
+                const { targetUserIds, accessToken, name } = data;
 
                 // userId là người đang muốn nhắn tin với => targetUserIds
                 const { userId } = tokenService.verifyAccessToken(accessToken);
@@ -59,6 +59,13 @@ export const initSocket = (httpServer) => {
                     }
 
                     // nếu code chạy tới đây, thì chatOneGroupExist sẽ luôn tồn tại
+
+                    const roomeName = `chat-${chatOneGroupExist.id}`;
+
+                    socket.join(roomeName);
+
+                    console.log(`UserId: ${userId} đang ở trong room: `, socket.rooms);
+
                     cb({
                         status: "succes",
                         message: "ok",
@@ -72,7 +79,7 @@ export const initSocket = (httpServer) => {
                 // Tạo bao nhiêu nhóm trùng thành viên cũng được
                 const chatManyGroupExist = await prisma.chatGroups.create({
                     data: {
-                        name: null,
+                        name: name,
                         ownerId: userId,
 
                         // đồng thời di chuyển vào ChatGroupMembers để tạo 2 thành viên
@@ -92,6 +99,85 @@ export const initSocket = (httpServer) => {
                     message: "ok",
                     data: { chatGroupId: chatManyGroupExist.id },
                 });
+            } catch (error) {
+                // thất bại
+                cb({
+                    status: "error",
+                    message: error?.message || "CREATE_ROOM Failed",
+                    data: null,
+                });
+            }
+        });
+
+        socket.on("SEND_MESSAGE", async (data) => {
+            console.log("SEND_MESSAGE", data);
+            const { message, accessToken, chatGroupId } = data;
+
+            // userId là người đang gửi tin
+            const { userId } = tokenService.verifyAccessToken(accessToken);
+
+            // gửi tin nhắn về room đã join trước
+            const roomeName = `chat-${chatGroupId}`;
+
+            const createdAt = new Date().toISOString();
+
+            console.log({
+                messageText: message,
+                userIdSender: userId,
+                chatGroupId: chatGroupId,
+                createdAt: createdAt,
+            });
+
+            io.to(roomeName).emit("SEND_MESSAGE", {
+                messageText: message,
+                userIdSender: userId,
+                chatGroupId: chatGroupId,
+                createdAt: createdAt,
+            });
+
+            await prisma.chatMessages.create({
+                data: {
+                    messageText: message,
+                    chatGroupId: chatGroupId,
+                    userIdSender: userId,
+                    createdAt: createdAt,
+                },
+            });
+        });
+
+        socket.on("JOIN_ROOM", async (data, cb) => {
+            try {
+                console.log("JOIN_ROOM", data);
+
+                const { chatGroupId, accessToken } = data;
+
+                // userId là người đang gửi tin
+                const { userId } = tokenService.verifyAccessToken(accessToken);
+
+                const chatGroupExist = await prisma.chatGroups.findFirst({
+                    where: {
+                        id: chatGroupId,
+                        ChatGroupMembers: {
+                            some: {
+                                userId: userId,
+                            },
+                        },
+                    },
+                });
+
+                if (!chatGroupExist) {
+                    throw new Error("User không có trong nhóm chat");
+                } else {
+                    const roomeName = `chat-${chatGroupExist.id}`;
+
+                    socket.join(roomeName);
+
+                    cb({
+                        status: "success",
+                        message: "Join room thành công",
+                        data: { chatGroupId: chatGroupExist.id },
+                    });
+                }
             } catch (error) {
                 // thất bại
                 cb({

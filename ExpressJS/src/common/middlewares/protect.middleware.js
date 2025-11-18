@@ -17,7 +17,7 @@ const protect = async (req, res, next) => {
         throw new UnauthorizedException("Accesstoken Chưa hợp lệ");
     }
 
-    console.log("protect", accessToken);
+    // console.log("protect", accessToken);
 
     // Xác minh token xem có hợp lệ hay không
     const { userId } = tokenService.verifyAccessToken(accessToken);

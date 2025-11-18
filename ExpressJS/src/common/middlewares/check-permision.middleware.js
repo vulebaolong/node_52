@@ -38,6 +38,6 @@ export const checkPermision = async (req, res, next) => {
         throw new BadRequestException("Người dùng không đủ quyền");
     }
 
-    console.log(`checkPermision`, { user: user, method, endpoint });
+    // console.log(`checkPermision`, { user: user, method, endpoint });
     next();
 };

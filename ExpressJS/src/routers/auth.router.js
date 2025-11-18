@@ -1,5 +1,5 @@
 import express from "express";
-import { authController } from "../controllers/auth.controler.js";
+import { authController } from "../controllers/auth.controller.js";
 import protect from "../common/middlewares/protect.middleware.js";
 import passport from "passport";
 import { checkPermision } from "../common/middlewares/check-permision.middleware.js";
