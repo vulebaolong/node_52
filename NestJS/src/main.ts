@@ -1,16 +1,21 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { PORT } from './common/constant/app.constant';
 import { ValidationPipe } from '@nestjs/common';
+import { ProtectGuard } from './common/guard/protect/protect.guard';
+import { CheckPermissionGuard } from './common/guard/check-permision/check-permision.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new ProtectGuard(reflector));
+  app.useGlobalGuards(new CheckPermissionGuard(reflector));
   app.useGlobalPipes(
     new ValidationPipe({
       // bật Chức năng chuyển kiểu dữ liệu
       transform: true,
-      // tự suy ra kiểu dữ liệu của biến 
+      // tự suy ra kiểu dữ liệu của biến
       transformOptions: { enableImplicitConversion: true },
     }),
   );

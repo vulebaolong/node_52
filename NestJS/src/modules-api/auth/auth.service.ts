@@ -76,7 +76,8 @@ export class AuthService {
     return tokens;
   }
 
-  getInfo() {
-    return 'Info user';
+  getInfo(req) {
+    delete req.user.password;
+    return req.user;
   }
 }

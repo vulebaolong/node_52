@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
 import { QueryDto } from './dto/query.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { UpdateArticleDto } from './dto/update-article.dto';
+import { SkipPermission } from 'src/common/decorators/check-permission.decorator';
 
 @Controller('article')
 export class ArticleController {
@@ -14,9 +24,11 @@ export class ArticleController {
     return this.articleService.create(createArticleDto);
   }
 
-  @UseGuards(AuthGuard("protect"))
+  // @UseGuards(ProtectGuard)
+  @SkipPermission()
   @Get()
-  findAll(@Query() queryDto: QueryDto) {
+  findAll(@Query() queryDto: QueryDto, @Req() req: any) {
+    console.log(req.user);
     return this.articleService.findAll(queryDto);
   }
 
