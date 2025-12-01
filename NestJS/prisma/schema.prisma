@@ -6,7 +6,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 model Articles {
@@ -132,22 +131,11 @@ model Users {
   deletedAt        DateTime?          @db.Timestamp(0)
   createdAt        DateTime           @default(now()) @db.Timestamp(0)
   updatedAt        DateTime           @default(now()) @db.Timestamp(0)
+  totpSecret       String?            @db.VarChar(255)
   ChatGroupMembers ChatGroupMembers[]
   ChatGroups       ChatGroups[]
   ChatMessages     ChatMessages[]
   Roles            Roles              @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Users_ibfk_1")
 
   @@index([roleId], map: "roleId")
-}
-
-model tblRoles {
-  id          Int       @id @default(autoincrement())
-  name        String    @db.VarChar(255)
-  description String    @db.VarChar(255)
-  isActvie    Boolean?  @default(true)
-  deletedBy   Int       @default(0)
-  isDeleted   Boolean   @default(false)
-  deletedAt   DateTime? @db.Timestamp(0)
-  createdAt   DateTime  @default(now()) @db.Timestamp(0)
-  updatedAt   DateTime  @default(now()) @db.Timestamp(0)
 }

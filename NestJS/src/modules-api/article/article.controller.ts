@@ -14,6 +14,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { QueryDto } from './dto/query.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { SkipPermission } from 'src/common/decorators/check-permission.decorator';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @Controller('article')
 export class ArticleController {
@@ -26,6 +27,7 @@ export class ArticleController {
 
   // @UseGuards(ProtectGuard)
   @SkipPermission()
+  @ResponseMessage("Get list article successs")
   @Get()
   findAll(@Query() queryDto: QueryDto, @Req() req: any) {
     console.log(req.user);

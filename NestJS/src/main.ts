@@ -4,6 +4,9 @@ import { PORT } from './common/constant/app.constant';
 import { ValidationPipe } from '@nestjs/common';
 import { ProtectGuard } from './common/guard/protect/protect.guard';
 import { CheckPermissionGuard } from './common/guard/check-permision/check-permision.guard';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { ResponseSuccessInterceptor } from './common/interceptors/response-success.interceptor';
+import { initSwagger } from './common/swagger/init.swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,7 +22,11 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.useGlobalInterceptors(new ResponseSuccessInterceptor(reflector));
   app.setGlobalPrefix('api');
+
+  initSwagger(app);
 
   await app.listen(PORT ?? 3000, () => {
     console.log(`🤷 Server online at http://localhost:${PORT}`);

@@ -57,8 +57,3 @@ export type Roles = Prisma.RolesModel
  * 
  */
 export type Users = Prisma.UsersModel
-/**
- * Model tblRoles
- * 
- */
-export type tblRoles = Prisma.tblRolesModel

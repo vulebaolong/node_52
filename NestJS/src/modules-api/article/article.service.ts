@@ -37,6 +37,7 @@ export class ArticleService {
       totalItem: totalItem,
       totalPage: totalPage,
       items: articles || [],
+      messageCustom: 'hello world',
     };
   }
 
