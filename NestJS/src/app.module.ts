@@ -8,10 +8,11 @@ import { TokenModule } from './modules-system/token/token.module';
 import { ArticleModule } from './modules-api/article/article.module';
 import { ProtectStrategy } from './common/guard/protect/protect.strategy';
 import { CheckPermissionStrategy } from './common/guard/check-permision/check-permission.strategy';
+import { EventGateway } from './modules-system/event/event.gateway';
 
 @Module({
   imports: [ConfigModule.forRoot(), AuthModule, PrismaModule, TokenModule, ArticleModule],
   controllers: [AppController],
-  providers: [AppService, ProtectStrategy, CheckPermissionStrategy],
+  providers: [AppService, ProtectStrategy, CheckPermissionStrategy, EventGateway],
 })
 export class AppModule {}
